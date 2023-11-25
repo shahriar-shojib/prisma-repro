@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  email String @unique
+
+  CompanyUser       CompanyUser[]
+  LocalParticipants LocalParticipants[]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model CompanyUser {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String  @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  role Role
+}
+
+model Company {
+  id      String        @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  users   CompanyUser[]
+  Meeting Meeting[]
+}
+
+model LocalParticipants {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  meeting   Meeting @relation(fields: [meetingId], references: [id])
+  meetingId String  @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
+
+  role Role
+}
+
+model Meeting {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId String  @db.ObjectId
+
+  title             String
+  localParticipants LocalParticipants[]
+}
