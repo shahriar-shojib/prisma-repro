@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 import assert from 'assert';
-import { ObjectId } from 'bson';
 const prisma = new PrismaClient();
 
 const main = async () => {
@@ -23,13 +22,12 @@ const main = async () => {
     },
   }); //
 
-  const createMeetingPayloads = Array(2)
+  const createMeetingPayloads = Array(10)
     .fill(null)
     .map(async (_, i) => {
       return await prisma.meeting.create({
         data: {
           title: `Meeting ${i}`,
-          id: new ObjectId().toString(),
           companyId: company.id,
           localParticipants: {
             create: {
